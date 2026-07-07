@@ -1,0 +1,25 @@
+# Experimento 1: classificação FLAT no nível mais fino (articleType),
+# com os níveis superiores derivados pela taxonomia na inferência.
+#
+# REGRA DE OURO DA COMPARAÇÃO: tudo abaixo, exceto `approach` e o bloco
+# `model.loss_weights`, deve ser IDÊNTICO ao multihead.yaml. O diff entre
+# os dois arquivos é a definição exata do experimento.
+
+approach: flat
+seed: 42                      # mesma seed => mesmo split de validação
+
+dataset:
+  version: small              # "small" (rápido) ou "full" (2400x1600, ~25 GB)
+  img_size: 224               # resolução nativa do pré-treino do ConvNeXt
+  valid_pct: 0.2
+  min_samples_per_class: 20   # classes com menos que isso saem do escopo (documentado)
+
+model:
+  arch: convnext_tiny
+
+train:
+  batch_size: 64              # cabe em uma T4 (16 GB) em 224px; reduza se der OOM
+  freeze_epochs: 1            # fase 1: só a cabeça, backbone congelado
+  epochs: 8                   # fase 2: rede inteira, discriminative LR
+  patience: 3                 # early stopping sobre a valid_loss
+  base_lr: null               # null => usa lr_find (valley); valor é logado

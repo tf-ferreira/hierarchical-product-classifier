@@ -1,0 +1,26 @@
+# Experimento 2: MULTI-HEAD (multi-task). Um backbone compartilhado e três
+# cabeças independentes, uma por nível da hierarquia.
+#
+# Diff em relação ao flat.yaml: `approach` e `model.loss_weights`.
+# Todo o resto idêntico, por desenho (isolamento de variável).
+
+approach: multihead
+seed: 42
+
+dataset:
+  version: small
+  img_size: 224
+  valid_pct: 0.2
+  min_samples_per_class: 20
+
+model:
+  arch: convnext_tiny
+  loss_weights: [1.0, 1.0, 1.0]   # pesos de (master, sub, article) na loss;
+                                  # hiperparâmetro aberto a experimentação
+
+train:
+  batch_size: 64
+  freeze_epochs: 1
+  epochs: 8
+  patience: 3
+  base_lr: null

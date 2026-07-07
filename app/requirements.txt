@@ -1,0 +1,8 @@
+# Dependências do Hugging Face Space (o Space instala isto, não o pyproject).
+# CPU basta para inferência; o Space gratuito não tem GPU e não precisa.
+fastai>=2.7.14
+timm>=0.9
+gradio>=4.0
+# O pacote do projeto, instalado direto do GitHub (fixe um commit/tag em
+# produção para o Space não quebrar com mudanças futuras do repo):
+git+https://github.com/tf-ferreira/hierarchical-product-classifier.git

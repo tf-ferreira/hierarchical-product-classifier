@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hierclf"
+version = "0.1.0"
+description = "Classificação hierárquica de produtos de e-commerce: flat vs multi-head com fastai + timm"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Thiago Ferreira", email = "thiagoferreira9594@gmail.com" }]
+keywords = ["computer-vision", "image-classification", "hierarchical-classification", "fastai", "timm", "e-commerce"]
+dependencies = [
+  "fastai>=2.7.14",
+  "timm>=0.9",
+  "pandas>=2.0",
+  "numpy>=1.24",
+  "pyyaml>=6.0",
+  "kagglehub>=0.2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.4"]
+app = ["gradio>=4.0"]
+
+[project.urls]
+Repository = "https://github.com/tf-ferreira/hierarchical-product-classifier"
+Demo = "https://huggingface.co/spaces/tf-ferreira/hierarchical-product-classifier"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 110
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Permite rodar `pytest` direto do clone, sem `pip install -e .`.
+pythonpath = ["src"]

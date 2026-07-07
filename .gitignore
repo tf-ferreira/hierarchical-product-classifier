@@ -1,0 +1,23 @@
+# Dados e modelos NÃO são versionados no Git: dados vêm do Kaggle
+# (reprodutível via data.py) e modelos vão para o Hugging Face Hub.
+# No Git ficam código, configs e resultados agregados (runs.csv, figuras).
+data/
+models/
+*.pkl
+*.pt
+*.pth
+
+# Artefatos de experimentos: versionamos a tabela consolidada e as
+# figuras, não os checkpoints pesados.
+experiments/*/
+!experiments/runs.csv
+
+# Python
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.venv/
+.ipynb_checkpoints/
+
+# Configuração local de ferramentas
+.claude/
