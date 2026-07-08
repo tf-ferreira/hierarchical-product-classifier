@@ -53,6 +53,7 @@ class DataReport:
     imagens_ausentes: int = 0            # id no CSV sem arquivo .jpg no disco
     classes_raras_removidas: int = 0     # articleTypes abaixo do mínimo
     exemplos_de_classes_raras: int = 0   # linhas removidas por classe rara
+    linhas_reetiquetadas: int = 0        # pais reescritos p/ o par majoritário
     linhas_finais: int = 0
     conflitos_taxonomia: list = field(default_factory=list)
 
@@ -64,6 +65,7 @@ class DataReport:
             f"imagens ausentes: {self.imagens_ausentes} | "
             f"classes raras removidas: {self.classes_raras_removidas} "
             f"({self.exemplos_de_classes_raras} linhas) | "
+            f"reetiquetadas pela taxonomia: {self.linhas_reetiquetadas} | "
             f"finais: {self.linhas_finais}"
         )
 
@@ -111,6 +113,12 @@ def load_and_validate(
          imagens na validação, e qualquer métrica sobre isso é ruído. Essa
          é uma decisão de escopo declarada, não uma limpeza escondida.
       5. Constrói a Taxonomy (com relato de conflitos).
+      6. CANONICALIZA os níveis superiores segundo a Taxonomy: linhas cujo
+         par (subCategory, masterCategory) perdeu o voto majoritário são
+         reescritas para o par vencedor (e contadas). Sem isto, um rótulo
+         minoritário (ex.: subCategory "Perfumes" quando o par majoritário
+         do articleType é outro) não existiria no vocabulário das cabeças
+         do multi-head e quebraria o treino com KeyError no DataLoader.
 
     Retorna (df pronto, taxonomia, relatório).
     """
@@ -149,10 +157,23 @@ def load_and_validate(
     report.exemplos_de_classes_raras = int(df["articleType"].isin(rare).sum())
     df = df[~df["articleType"].isin(rare)].copy()
 
-    report.linhas_finais = len(df)
-
     taxonomy, conflicts = Taxonomy.from_dataframe(df)
     report.conflitos_taxonomia = conflicts
+
+    # Canonicalização: a Taxonomy é a fonte única da verdade, então o df de
+    # treino deve refletir exatamente o mapeamento dela. Isso também torna os
+    # alvos do multi-head consistentes com a derivação usada pelo flat na
+    # avaliação (comparação justa entre abordagens).
+    pares = [taxonomy.parents_of(a) for a in df["articleType"]]
+    canon_sub = pd.Series([p[0] for p in pares], index=df.index)
+    canon_master = pd.Series([p[1] for p in pares], index=df.index)
+    report.linhas_reetiquetadas = int(
+        ((df["subCategory"] != canon_sub) | (df["masterCategory"] != canon_master)).sum()
+    )
+    df["subCategory"] = canon_sub
+    df["masterCategory"] = canon_master
+
+    report.linhas_finais = len(df)
 
     return df.reset_index(drop=True), taxonomy, report
 

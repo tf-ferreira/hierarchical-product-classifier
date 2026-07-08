@@ -34,6 +34,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from .data import build_dataloaders, download_dataset, load_and_validate
 from .taxonomy import LEVELS, Taxonomy
 
 
@@ -58,10 +59,33 @@ def evaluate_run(run_dir: str | Path) -> dict:
     export_path = exports[0]
     approach = export_path.stem.replace("export_", "")
 
-    learn = load_learner(export_path)
+    # learn.export NÃO carrega dados (o pipeline é salvo vazio, por design do
+    # fastai). Reconstruímos o conjunto de validação a partir da config do
+    # run: como o split é função determinística de (dados, seed), obtemos
+    # EXATAMENTE a validação vista no treino.
+    config = json.loads((run_dir / "config.json").read_text(encoding="utf-8"))["config"]
+    data_root = download_dataset(version=config["dataset"]["version"])
+    df, _, _ = load_and_validate(
+        data_root, min_samples_per_class=int(config["dataset"]["min_samples_per_class"])
+    )
+    dls = build_dataloaders(
+        df,
+        taxonomy,  # a taxonomia ARTEFATO do run, para vocabulários idênticos
+        approach=approach,
+        img_size=int(config["dataset"]["img_size"]),
+        batch_size=int(config["train"]["batch_size"]),
+        valid_pct=float(config["dataset"]["valid_pct"]),
+        seed=int(config["seed"]),
+    )
+
+    import torch
+
+    # cpu=False quando há GPU: os batches do dls reconstruído vivem no
+    # dispositivo padrão (cuda, se disponível) e o modelo precisa acompanhar.
+    learn = load_learner(export_path, cpu=not torch.cuda.is_available())
     # get_preds na validação: logits + alvos, sem augmentation (só transforms
     # determinísticos), exatamente como em produção.
-    preds, targets = learn.get_preds()
+    preds, targets = learn.get_preds(dl=dls.valid)
 
     vocabs = {level: taxonomy.vocab(level) for level in LEVELS}
     results: dict = {"approach": approach, "run_dir": str(run_dir)}
