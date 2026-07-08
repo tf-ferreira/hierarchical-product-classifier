@@ -21,3 +21,6 @@ __pycache__/
 
 # Configuração local de ferramentas
 .claude/
+
+# Orquestração de infra local (Modal), fora do repositório como o Colab
+modal_train.py
