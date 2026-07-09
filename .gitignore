@@ -24,3 +24,4 @@ __pycache__/
 
 # Orquestração de infra local (Modal), fora do repositório como o Colab
 modal_train.py
+kaggle_train/

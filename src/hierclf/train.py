@@ -149,7 +149,11 @@ def run_training(config: dict, experiments_dir: str | Path = "experiments") -> P
     # Métricas finais da melhor época (SaveModelCallback já recarregou o
     # melhor checkpoint ao fim do treino).
     final = learn.validate()
-    metric_names = ["valid_loss"] + [m.__name__ if hasattr(m, "__name__") else str(m) for m in learn.metrics]
+    # learn.metrics embrulha as funções em AvgMetric, que expõe .name
+    # (ex.: "accuracy"), não __name__; str(m) seria o repr do objeto.
+    metric_names = ["valid_loss"] + [
+        getattr(m, "name", None) or getattr(m, "__name__", str(m)) for m in learn.metrics
+    ]
     logger.finalize(**dict(zip(metric_names, [float(v) for v in final])))
 
     return logger.dir
