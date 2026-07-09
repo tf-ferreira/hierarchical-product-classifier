@@ -66,13 +66,23 @@ mesmo split estratificado de validação. O diff entre `configs/flat.yaml` e
 
 ## Resultados
 
-> _Em andamento: tabela preenchida a partir de `experiments/runs.csv` após os
-> runs de treino._
+Validação estratificada (20%, seed 42), ConvNeXt-Tiny a 224 px, ~3 h de
+fine-tuning por experimento em uma Tesla T4. Números completos em
+`experiments/runs.csv` e nos `evaluation.json` de cada run.
 
 | Experimento | acc master | acc sub | acc article | consistência hierárquica |
 |---|---|---|---|---|
-| flat + taxonomia | | | | 100% (por construção) |
-| multi-head | | | | |
+| flat + taxonomia | **99,6%** | **97,2%** | **90,1%** | **100%** (por construção) |
+| multi-head | 99,3% | 94,1% | 83,1% | 96,3% |
+
+O flat venceu nos três níveis. A leitura: com uma taxonomia limpa em mãos,
+prever apenas o nível mais fino e derivar os superiores é melhor do que
+dividir a capacidade do modelo entre três objetivos — a loss combinada do
+multi-head disputa gradiente entre cabeças redundantes (o nível fino já
+determina os demais) e ainda paga 3,7 p.p. de inconsistência hierárquica,
+um modo de erro que o flat elimina por construção. As confusões restantes
+do flat são pares genuinamente ambíguos visualmente (Sports × Casual Shoes,
+Tshirts × Tops, Kurtas × Kurtis).
 
 Análise de erros (matriz de confusão, top confusões e `top_losses`
 interpretados) em `notebooks/02_error_analysis.ipynb` e `reports/figures/`.

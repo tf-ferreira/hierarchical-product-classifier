@@ -1,0 +1,3 @@
+run_id,run_name,finished_at,duration_s,cfg.approach,cfg.seed,cfg.dataset.version,cfg.dataset.img_size,cfg.dataset.valid_pct,cfg.dataset.min_samples_per_class,cfg.model.arch,cfg.train.batch_size,cfg.train.freeze_epochs,cfg.train.epochs,cfg.train.patience,cfg.train.base_lr,valid_loss,accuracy,cfg.model.loss_weights,acc_master,acc_sub,acc_article
+20260709-025248-280f58,flat,2026-07-09T05:50:25,10657.3,flat,42,small,224,0.2,20,convnext_tiny,64,1,8,3,,1.0512641668319702,0.9011812806129456,,,,
+20260709-081634-383f3d,multihead,2026-07-09T11:18:58,10944.2,multihead,42,small,224,0.2,20,convnext_tiny,64,1,8,3,,2.537141799926758,,"[1.0, 1.0, 1.0]",0.9925034046173096,0.9412766695022584,0.8307587504386902
