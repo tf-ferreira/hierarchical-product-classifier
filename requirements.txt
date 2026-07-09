@@ -1,0 +1,16 @@
+# Dependências do DEMO Streamlit (app/streamlit_app.py) para o Streamlit
+# Community Cloud, que instala este arquivo da raiz do repo. O ambiente de
+# desenvolvimento do projeto usa o pyproject.toml (make setup), não isto.
+#
+# torch CPU-only: inferência não precisa de GPU e a wheel CUDA estoura o
+# limite de armazenamento do plano gratuito.
+--index-url https://download.pytorch.org/whl/cpu
+--extra-index-url https://pypi.org/simple
+torch>=2.2
+torchvision
+fastai>=2.7.14
+timm>=0.9
+pandas>=2.0
+pyyaml>=6.0
+streamlit>=1.36
+huggingface_hub>=0.23

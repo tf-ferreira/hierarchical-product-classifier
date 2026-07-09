@@ -11,7 +11,8 @@ hierárquica de imagens de produtos (**flat + taxonomia** vs. **multi-head
 multi-task**), com fastai + timm (ConvNeXt-Tiny) sobre o dataset
 [Fashion Product Images](https://www.kaggle.com/datasets/paramaggarwal/fashion-product-images-small).
 
-> **Demo interativo:** [Hugging Face Space](https://huggingface.co/spaces/tf-ferreira/hierarchical-product-classifier) (envie a foto de um produto e receba os três níveis da taxonomia)
+> **Demo interativo:** [Streamlit Cloud](https://hierclf-demo.streamlit.app) (envie a foto de um produto e receba os três níveis da taxonomia) ·
+> **Modelo publicado:** [Hugging Face Hub](https://huggingface.co/thf-thiago/hierarchical-product-classifier)
 
 ## O problema
 
@@ -101,7 +102,7 @@ interpretados) em `notebooks/02_error_analysis.ipynb` e `reports/figures/`.
 │   └── inference.py    # contrato de predição único para as duas abordagens
 ├── tests/              # pytest; roda sem GPU e sem fastai
 ├── notebooks/          # 01: EDA · 02: análise de erros (a lógica vive no pacote)
-├── app/                # demo Gradio (Hugging Face Spaces)
+├── app/                # demos: Streamlit (Streamlit Cloud) e Gradio (local)
 └── reports/figures/    # figuras versionadas citadas neste README
 ```
 
