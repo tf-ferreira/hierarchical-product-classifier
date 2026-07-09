@@ -26,3 +26,4 @@ __pycache__/
 modal_train.py
 kaggle_train/
 hf_space/
+HANDOFF.md
